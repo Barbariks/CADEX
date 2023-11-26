@@ -159,44 +159,44 @@ random_device Generator::rd;
 
 int main()
 {
-    constexpr size_t sz = 10;    // размер первого массива
-    const double pi = acos(-1);    // пи****
+    constexpr size_t sz = 10;
+    const double pi = acos(-1);
     
-    vector<PShape> shape_vec;    // массив указателей на объекты базового класса
+    vector<PShape> shape_vec;
 
     {
-        Generator s_gen;    // генератор
-        s_gen.set_New_Range(-10, 10);    // инициализируем диапазон
+        Generator s_gen;
+        s_gen.set_New_Range(-10, 10);
         for (size_t i{}; i < sz; ++i)
-            shape_vec.emplace_back(s_gen.random_shape());    // заполняем массив
+            shape_vec.emplace_back(s_gen.random_shape());
     }
     
-    using PCircle = shared_ptr<Circle>;    // псевдоним типа - умный указатель на Circle3D
+    using PCircle = shared_ptr<Circle>;
 
-    vector<PCircle> circle_vec;    // массив указателей на Circle3D из первого контейнера
+    vector<PCircle> circle_vec;
 
-    double radius_sum{};    // сумма радиусов Circle3D
+    double radius_sum{};
 
     for (auto& ps : shape_vec)
     {
-        const type_info& ti{ typeid(*ps) };    // информация о типе объекта, на который указывает ps из первого контейнера
+        const type_info& ti{ typeid(*ps) };
 
-        cout << ti.name() << ' '    // выводим имя типа
-                  << ps->curve_point(pi/4) << ' '    // точку кривой, заданную параметром
-                  << ps->curve_vector(pi/4) << endl;    // вектор(первая производная - касательная) в предыдущей точке
+        cout << ti.name() << ' '
+                  << ps->curve_point(pi/4) << ' '
+                  << ps->curve_vector(pi/4) << endl;
 
-        if (ti.hash_code() == typeid(Circle).hash_code())    // если текущий объект - указатель на Circle3D
+        if (ti.hash_code() == typeid(Circle).hash_code())
         {
-            circle_vec.emplace_back(dynamic_pointer_cast<Circle>(ps));    // кастим его к указателю на Circle3D
-            radius_sum += circle_vec.back()->radius();    // плюсуем радиус
-            cout << "to another vector -->\n";    // debug (можно удалить эту строку)
+            circle_vec.emplace_back(dynamic_pointer_cast<Circle>(ps));
+            radius_sum += circle_vec.back()->radius();
+            cout << "to another vector -->\n";
         }
         cout << endl;
     }
-    sort(circle_vec.begin(), circle_vec.end(), [](const auto& lh, const auto& rh)   // сортируем по радиусу
+    sort(circle_vec.begin(), circle_vec.end(), [](const auto& lh, const auto& rh)
     {return lh->radius() < rh->radius();});
 
-    for (auto& pc : circle_vec)    // демонстрируем отсортированное
+    for (auto& pc : circle_vec)
         cout << pc->radius() << endl;
-    cout << "summ = " << radius_sum << endl;    // и сумму радиусов всех Circle3D
+    cout << "summ = " << radius_sum << endl;
 }
